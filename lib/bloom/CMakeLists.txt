@@ -2,4 +2,5 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-rsource "lib/Kconfig"
+zephyr_library()
+zephyr_library_sources(bloom-filter.c)

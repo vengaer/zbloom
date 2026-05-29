@@ -2,4 +2,5 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-rsource "lib/Kconfig"
+rsource "bloom/Kconfig"
+rsource "hash/Kconfig"

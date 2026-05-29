@@ -2,4 +2,5 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-rsource "lib/Kconfig"
+add_subdirectory(hash)
+add_subdirectory_ifdef(CONFIG_BLOOM_FILTER bloom)

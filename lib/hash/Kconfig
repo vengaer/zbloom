@@ -1,0 +1,8 @@
+# Copyright (c) 2026 Vilhelm Engström
+#
+# SPDX-License-Identifier: Apache-2.0
+
+config SYS_HASH_FUNC_MURMUR128
+	bool "32 bit (x86) murmur3 hash with 128 bit digest"
+	help
+	  Enable the x86 version of the 128-bit digest murmur3 hash.

@@ -1,0 +1,11 @@
+# Copyright (c) 2026 Vilhelm Engström
+#
+# SPDX-License-Identifier: Apache-2.0
+
+config BLOOM_FILTER
+	bool "Enable generic bloom filter implementation"
+	select SYS_HASH_FUNC_MURMUR128
+	help
+	  A bloom filter is a space-efficient probabilistic data structure
+	  used to test for set membership. Lookups may yield false positives
+	  but never false negatives.
