@@ -101,6 +101,7 @@ inline int z_bloom_filter_init(struct bloom_filter *flt, size_t fltsize,
 {
 	flt->nbits = (fltsize - sizeof(*flt)) << 3u;
 	flt->nhashes = num_hashes;
+	memset(flt->bitset, 0, flt->nbits >> 3u);
 	return 0;
 }
 
