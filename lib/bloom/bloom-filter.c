@@ -16,6 +16,9 @@ int z_bloom_filter_init(struct bloom_filter *flt, size_t fltsize,
 void bloom_filter_insert(void *flt, void const *elem, size_t elemsize);
 bool bloom_filter_test(void const *flt, void const *elem, size_t elemsize);
 void bloom_filter_clear(void *fltadr);
+#ifdef CONFIG_BLOOM_FILTER_SIZE
+size_t bloom_filter_size(void const *fltadr);
+#endif
 
 
 static inline void bloom_filter_set_bit(struct bloom_filter *flt,
@@ -54,6 +57,10 @@ void z_bloom_filter_insert(struct bloom_filter *flt, void const *elem,
 		for (unsigned int j = 0u; j < (flt->nhashes & 3u); ++j)
 			bloom_filter_set_bit(flt, digest.d32[j] % flt->nbits);
 	}
+
+#ifdef CONFIG_BLOOM_FILTER_SIZE
+	flt->size += 1u;
+#endif
 }
 
 

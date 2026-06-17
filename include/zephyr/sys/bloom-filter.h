@@ -13,6 +13,7 @@
 #ifndef ZEPHYR_INCLUDE_SYS_BLOOM_FILTER_H_
 #define ZEPHYR_INCLUDE_SYS_BLOOM_FILTER_H_
 
+#include <assert.h>
 #include <stdalign.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -41,6 +42,10 @@ struct bloom_filter {
 	unsigned int nbits;
 	/** Number of hashes to use */
 	unsigned int nhashes;
+#if defined CONFIG_BLOOM_FILTER_SIZE || defined __DOXYGEN__
+	/** Number of entries in the filter */
+	size_t size;
+#endif
 #if !defined __cplusplus || defined __DOXYGEN__
 	/** Bitset used for tracking membership */
 	uint8_t bitset[];
@@ -50,6 +55,8 @@ struct bloom_filter {
 };
 
 
+
+#if defined CONFIG_BLOOM_FILTER_SIZE || defined __DOXYGEN__
 /**
  * @brief Structure representing a bloom filter storing @p bitsize bits
  *
@@ -75,11 +82,37 @@ struct bloom_filter {
 	struct {						\
 		unsigned int nbits;				\
 		unsigned int nhashes;				\
+		size_t size;					\
 		static_assert(					\
 			bitsize > 0, "Bitsize must be >0"	\
 		);						\
 		uint8_t bitset[(((bitsize) + 7u) & ~7u) >> 3u];	\
 	}
+
+#else /* BLOOM_FILTER_SIZE || __DOXYGEN__ */
+
+#define BLOOM_FILTER_STRUCT(bitsize)				\
+	struct {						\
+		unsigned int nbits;				\
+		unsigned int nhashes;				\
+		static_assert(					\
+			bitsize > 0, "Bitsize must be >0"	\
+		);						\
+		uint8_t bitset[(((bitsize) + 7u) & ~7u) >> 3u];	\
+	}
+
+#endif
+
+#ifdef __cplusplus
+static_assert(sizeof(BLOOM_FILTER_STRUCT(1)) == sizeof(struct bloom_filter),
+"Filter struct mismatch");
+#else
+static_assert(sizeof(BLOOM_FILTER_STRUCT(1)) ==
+		sizeof(struct bloom_filter) +
+			((sizeof(uint8_t) + alignof(struct bloom_filter) - 1) &
+				~(alignof(struct bloom_filter) - 1)),
+"Filter struct mismatch");
+#endif
 
 
 /**
@@ -195,7 +228,20 @@ inline void bloom_filter_clear(void *fltadr)
 {
 	struct bloom_filter *flt = fltadr;
 	memset(flt->bitset, 0, flt->nbits >> 3u);
+#ifdef CONFIG_BLOOM_FILTER_SIZE
+	flt->size = 0u;
+#endif
 }
+
+#if defined CONFIG_BLOOM_FILTER_SIZE || defined __DOXYGEN__
+
+inline size_t bloom_filter_size(void const *fltadr)
+{
+	struct bloom_filter const *flt = fltadr;
+	return flt->size;
+}
+
+#endif /* BLOOM_FILTER_SIZE || __DOXYGEN__ */
 
 
 #ifdef __cplusplus

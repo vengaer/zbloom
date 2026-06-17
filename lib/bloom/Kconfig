@@ -9,3 +9,13 @@ config BLOOM_FILTER
 	  A bloom filter is a space-efficient probabilistic data structure
 	  used to test for set membership. Lookups may yield false positives
 	  but never false negatives.
+
+if BLOOM_FILTER
+
+config BLOOM_FILTER_SIZE
+	bool "Track number of entries in bloom filters"
+	default y
+	help
+	  Provides access to the bloom_filter_size function.
+
+endif
